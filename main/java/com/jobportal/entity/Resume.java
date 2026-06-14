@@ -3,11 +3,11 @@ package com.jobportal.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,13 +16,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "resumes")
+@Entity
+@Table(name = "resumes")
 public class Resume {
 	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 	
-	@Indexed
-	@DBRef
+	@ManyToOne
 	private User userId; // User reference
 	
 	private String fileName; // Required
@@ -33,22 +34,26 @@ public class Resume {
 	
 	private String fileType; // pdf, doc, docx
 	
-	@Indexed
+	
 	private Boolean isDefault = true;
 	
-	@CreatedDate
+	@CreationTimestamp
 	private LocalDateTime uploadedAt;
 	
 	// AI-extracted data (optional)
+	@Embedded
 	private ParsedData parsedData;
 	
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Embeddable
 	public static class ParsedData {
-		private List<String> skills;
+		@ElementCollection
+	private List<String> skills;
 		private Integer experience; // Years of experience
 		private List<String> education;
+		@ElementCollection
 		private List<String> certifications;
 	}
 }

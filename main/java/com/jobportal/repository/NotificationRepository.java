@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.jobportal.entity.Notification;
 import com.jobportal.entity.User;
 
-public interface NotificationRepository extends MongoRepository<Notification, String> {
+public interface NotificationRepository extends JpaRepository<Notification, String> {
 	
 	// Find notifications by user
 	List<Notification> findByUserIdOrderByCreatedAtDesc(User userId);

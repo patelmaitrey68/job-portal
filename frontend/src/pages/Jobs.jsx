@@ -9,7 +9,7 @@ const Jobs = () => {
   ];
 
   return (
-    <div style={{ padding: '2rem 5%', maxWidth: '1200px', margin: '0 auto', display: 'flex', gap: '2rem' }}>
+    <div className="page-container" style={{ display: 'flex', gap: '2rem' }}>
       {/* Sidebar Filters */}
       <div style={{ flex: '0 0 250px' }}>
         <div className="glass-card" style={{ position: 'sticky', top: '100px' }}>

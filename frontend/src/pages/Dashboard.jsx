@@ -1,11 +1,20 @@
 import { User, FileText, Bookmark, Settings, Bell } from 'lucide-react';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const Dashboard = () => {
+  const { user } = useContext(AuthContext);
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
   return (
-    <div style={{ padding: '2rem 5%', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="page-container">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
-          <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Welcome, John Doe</h1>
+          <h1 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>Welcome, {user.name || user.email}</h1>
           <p style={{ color: 'var(--text-secondary)' }}>Here is what's happening with your job applications today.</p>
         </div>
         <button className="btn-primary" style={{ borderRadius: '50%', width: '40px', height: '40px', padding: '0' }}>
@@ -13,7 +22,7 @@ const Dashboard = () => {
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
+      <div className="grid-auto-fit" style={{ marginBottom: '3rem' }}>
         <div className="glass-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ background: 'rgba(139, 92, 246, 0.2)', padding: '1rem', borderRadius: '12px' }}>
             <FileText color="var(--primary)" size={24} />

@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 
 import com.jobportal.entity.Job;
 import com.jobportal.entity.User;
 
-public interface JobRepository extends MongoRepository<Job, String> {
+public interface JobRepository extends JpaRepository<Job, String> {
 	
 	// Find jobs by recruiter
 	List<Job> findByPostedBy(User postedBy);
@@ -37,11 +37,11 @@ public interface JobRepository extends MongoRepository<Job, String> {
 	Page<Job> findByStatusOrderByCreatedAtDesc(String status, Pageable pageable);
 	
 	// Search jobs by text
-	@Query("{ $text: { $search: ?0 }, status: 'active' }")
+	@org.springframework.data.jpa.repository.Query("SELECT j FROM Job j WHERE (LOWER(j.title) LIKE LOWER(CONCAT('%', ?1, '%')) OR LOWER(j.description) LIKE LOWER(CONCAT('%', ?1, '%')) OR LOWER(j.company) LIKE LOWER(CONCAT('%', ?1, '%'))) AND j.status = 'active'")
 	List<Job> searchJobs(String searchText);
 	
 	// Find jobs by multiple filters
-	@Query("{ status: ?0, location: ?1, jobType: ?2 }")
+	@org.springframework.data.jpa.repository.Query("SELECT j FROM Job j WHERE j.status = ?1 AND j.location = ?2 AND j.jobType = ?3")
 	List<Job> findByFilters(String status, String location, String jobType);
 	
 	// Find featured jobs

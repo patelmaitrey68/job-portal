@@ -3,11 +3,11 @@ package com.jobportal.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+
 
 import com.jobportal.dto.AccountType;
 
@@ -18,14 +18,16 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "users")
+@Entity
+@Table(name = "users")
 public class User {
 	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 	
 	private String name;
 	
-	@Indexed(unique = true)
+	@Column(unique = true)
 	private String email;
 	
 	private String password;
@@ -41,10 +43,13 @@ public class User {
 	private String bio; // Max 500 characters
 	
 	// For Job Seekers
+	@ElementCollection
 	private List<String> skills;
 	
+	@ElementCollection
 	private List<Experience> experience;
 	
+	@ElementCollection
 	private List<Education> education;
 	
 	private Boolean isActive = true;
@@ -57,10 +62,10 @@ public class User {
 	
 	private LocalDateTime resetPasswordExpires;
 	
-	@CreatedDate
+	@CreationTimestamp
 	private LocalDateTime createdAt;
 	
-	@LastModifiedDate
+	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 	
 	public com.jobportal.dto.UserDTO toDTO() {
@@ -75,6 +80,7 @@ public class User {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Embeddable
 	public static class Experience {
 		private String company;
 		private String position;
@@ -87,6 +93,7 @@ public class User {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Embeddable
 	public static class Education {
 		private String institution;
 		private String degree;

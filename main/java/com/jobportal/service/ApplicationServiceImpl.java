@@ -53,8 +53,29 @@ public class ApplicationServiceImpl implements ApplicationService {
 		application.setStatus("pending");
 		application.setAppliedAt(LocalDateTime.now());
 		application.setUpdatedAt(LocalDateTime.now());
-		application.setMatchScore(applicationDTO.getMatchScore());
-		application.setSkillsMatch(applicationDTO.getSkillsMatch());
+		
+		// AI Resume Matcher Logic
+		double matchScore = 0.0;
+		List<String> matchedSkills = new java.util.ArrayList<>();
+		if (job.getSkills() != null && !job.getSkills().isEmpty() && applicationDTO.getSkillsMatch() != null) {
+		    List<String> jobSkills = job.getSkills().stream().map(String::toLowerCase).collect(Collectors.toList());
+		    List<String> applicantSkills = applicationDTO.getSkillsMatch().stream().map(String::toLowerCase).collect(Collectors.toList());
+		    
+		    for (String jSkill : jobSkills) {
+		        for (String aSkill : applicantSkills) {
+		            if (aSkill.contains(jSkill) || jSkill.contains(aSkill)) {
+		                matchedSkills.add(jSkill);
+		                break;
+		            }
+		        }
+		    }
+		    matchScore = (double) matchedSkills.size() / jobSkills.size() * 100.0;
+		    // cap at 100
+		    if (matchScore > 100.0) matchScore = 100.0;
+		}
+		
+		application.setMatchScore(applicationDTO.getMatchScore() != null ? applicationDTO.getMatchScore() : matchScore);
+		application.setSkillsMatch(matchedSkills.isEmpty() && applicationDTO.getSkillsMatch() != null ? applicationDTO.getSkillsMatch() : matchedSkills);
 		
 		application = applicationRepository.save(application);
 		

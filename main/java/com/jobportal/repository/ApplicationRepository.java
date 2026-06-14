@@ -5,14 +5,14 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 
 import com.jobportal.entity.Application;
 import com.jobportal.entity.Job;
 import com.jobportal.entity.User;
 
-public interface ApplicationRepository extends MongoRepository<Application, String> {
+public interface ApplicationRepository extends JpaRepository<Application, String> {
 	
 	// Find applications by job
 	List<Application> findByJobId(Job jobId);
@@ -49,7 +49,7 @@ public interface ApplicationRepository extends MongoRepository<Application, Stri
 	List<Application> findByApplicantIdOrderByAppliedAtDesc(User applicantId);
 	
 	// Find applications ordered by match score
-	@Query("{ jobId: ?0 }")
+	@org.springframework.data.jpa.repository.Query("SELECT a FROM Application a WHERE a.jobId = ?1 ORDER BY a.matchScore DESC")
 	List<Application> findByJobIdOrderByMatchScoreDesc(Job jobId);
 }
 

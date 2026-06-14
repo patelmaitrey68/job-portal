@@ -5,13 +5,13 @@ import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.jobportal.entity.Job;
 import com.jobportal.entity.SavedJob;
 import com.jobportal.entity.User;
 
-public interface SavedJobRepository extends MongoRepository<SavedJob, String> {
+public interface SavedJobRepository extends JpaRepository<SavedJob, String> {
 	
 	// Find saved jobs by user
 	List<SavedJob> findByUserIdOrderBySavedAtDesc(User userId);

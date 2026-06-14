@@ -3,13 +3,13 @@ package com.jobportal.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.index.TextIndexed;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+
+
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,30 +18,34 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "jobs")
+@Entity
+@Table(name = "jobs")
 public class Job {
 	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 	
-	@TextIndexed
+	
 	private String title; // Required, min 5, max 100
 	
-	@TextIndexed
+	
 	private String company; // Required, min 2, max 100
 	
 	private String companyLogo;
 	
-	@TextIndexed
+	
 	private String description; // Required, min 50
 	
+	@ElementCollection
 	private List<String> requirements;
 	
+	@ElementCollection
 	private List<String> responsibilities;
 	
-	@Indexed
+	
 	private String location; // Required
 	
-	@Indexed
+	
 	private String jobType; // full-time, part-time, contract, internship, remote
 	
 	private String experienceLevel; // entry, mid, senior, executive
@@ -56,13 +60,13 @@ public class Job {
 	
 	private String industry;
 	
+	@ElementCollection
 	private List<String> skills; // Required skills
 	
-	@Indexed
-	@DBRef
+	@ManyToOne
 	private User postedBy; // Recruiter reference
 	
-	@Indexed
+	
 	private String status = "active"; // active, draft, closed, expired
 	
 	private LocalDateTime applicationDeadline;
@@ -73,10 +77,10 @@ public class Job {
 	
 	private Boolean isFeatured = false;
 	
-	@CreatedDate
+	@CreationTimestamp
 	private LocalDateTime createdAt;
 	
-	@LastModifiedDate
+	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 }
 

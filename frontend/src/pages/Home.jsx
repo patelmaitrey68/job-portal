@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
   return (
-    <div style={{ padding: '2rem 5%' }}>
+    <div className="page-container">
       {/* Hero Section */}
       <section style={{ textAlign: 'center', margin: '4rem 0', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <h1 style={{ 
@@ -47,7 +47,7 @@ const Home = () => {
       {/* Featured Jobs */}
       <section style={{ margin: '6rem 0' }}>
         <h2 style={{ fontSize: '2rem', marginBottom: '2rem' }}>Featured Opportunities</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2rem' }}>
+        <div className="grid-auto-fit">
           {[1, 2, 3].map((i) => (
             <div key={i} className="glass-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>

@@ -3,12 +3,12 @@ package com.jobportal.repository;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.jobportal.entity.Resume;
 import com.jobportal.entity.User;
 
-public interface ResumeRepository extends MongoRepository<Resume, String> {
+public interface ResumeRepository extends JpaRepository<Resume, String> {
 	
 	// Find resumes by user
 	List<Resume> findByUserId(User userId);

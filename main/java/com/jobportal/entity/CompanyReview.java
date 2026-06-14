@@ -1,12 +1,14 @@
 package com.jobportal.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
+
 import java.util.Date;
 
-@Document(collection = "company_reviews")
+@Entity
+@Table(name = "company_reviews")
 public class CompanyReview {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
     private String companyId;
     private String authorId;

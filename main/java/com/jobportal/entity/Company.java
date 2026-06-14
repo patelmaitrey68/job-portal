@@ -1,12 +1,12 @@
 package com.jobportal.entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.index.TextIndexed;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+
+
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,21 +15,23 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "companies")
+@Entity
+@Table(name = "companies")
 public class Company {
 	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
 	private String id;
 	
-	@Indexed(unique = true)
-	@DBRef
+	@OneToOne
+	@JoinColumn(unique = true)
 	private User recruiterId; // Recruiter reference
 	
-	@TextIndexed
+	
 	private String companyName; // Required
 	
 	private String companyLogo;
 	
-	@TextIndexed
+	
 	private String description;
 	
 	private String website; // URL
@@ -46,19 +48,21 @@ public class Company {
 	
 	private String email;
 	
+	@Embedded
 	private SocialMedia socialMedia;
 	
 	private Integer foundedYear;
 	
-	@CreatedDate
+	@CreationTimestamp
 	private java.time.LocalDateTime createdAt;
 	
-	@LastModifiedDate
+	@UpdateTimestamp
 	private java.time.LocalDateTime updatedAt;
 	
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@Embeddable
 	public static class SocialMedia {
 		private String linkedin;
 		private String twitter;
