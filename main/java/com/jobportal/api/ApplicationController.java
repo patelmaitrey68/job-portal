@@ -111,6 +111,15 @@ public class ApplicationController {
 		return ResponseEntity.noContent().build();
 	}
 	
+	@PostMapping("/{id}/accept-offer")
+	public ResponseEntity<ApplicationDTO> acceptOffer(
+			@PathVariable String id,
+			Authentication authentication) {
+		User applicant = getCurrentUser(authentication);
+		ApplicationDTO updated = applicationService.acceptOffer(id, applicant);
+		return ResponseEntity.ok(updated);
+	}
+	
 	@GetMapping("/status/{status}")
 	public ResponseEntity<List<ApplicationDTO>> getApplicationsByStatus(
 			@PathVariable String status,

@@ -26,5 +26,7 @@ public class RegisterRequest {
 	
 	@NotNull(message = "Account type is required")
 	private AccountType accountType;
+	
+	private String companyName;
 }
 

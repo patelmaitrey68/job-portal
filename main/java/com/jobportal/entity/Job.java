@@ -37,9 +37,13 @@ public class Job {
 	private String description; // Required, min 50
 	
 	@ElementCollection
+	@CollectionTable(name = "job_requirements", joinColumns = @JoinColumn(name = "job_id"))
+	@Column(name = "requirement")
 	private List<String> requirements;
 	
 	@ElementCollection
+	@CollectionTable(name = "job_responsibilities", joinColumns = @JoinColumn(name = "job_id"))
+	@Column(name = "responsibility")
 	private List<String> responsibilities;
 	
 	
@@ -61,6 +65,8 @@ public class Job {
 	private String industry;
 	
 	@ElementCollection
+	@CollectionTable(name = "job_skills", joinColumns = @JoinColumn(name = "job_id"))
+	@Column(name = "skill")
 	private List<String> skills; // Required skills
 	
 	@ManyToOne

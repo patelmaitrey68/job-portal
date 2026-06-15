@@ -42,14 +42,20 @@ public class User {
 	
 	private String bio; // Max 500 characters
 	
+	private String companyName; // For Employers
+	
 	// For Job Seekers
 	@ElementCollection
+	@CollectionTable(name = "user_skills", joinColumns = @JoinColumn(name = "user_id"))
+	@Column(name = "skill")
 	private List<String> skills;
 	
 	@ElementCollection
+	@CollectionTable(name = "user_experience", joinColumns = @JoinColumn(name = "user_id"))
 	private List<Experience> experience;
 	
 	@ElementCollection
+	@CollectionTable(name = "user_education", joinColumns = @JoinColumn(name = "user_id"))
 	private List<Education> education;
 	
 	private Boolean isActive = true;
@@ -74,6 +80,7 @@ public class User {
 		dto.setName(this.name);
 		dto.setEmail(this.email);
 		dto.setAccountType(this.accountType);
+		dto.setCompanyName(this.companyName);
 		return dto;
 	}
 	

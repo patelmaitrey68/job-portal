@@ -20,5 +20,6 @@ public interface ApplicationService {
 	List<ApplicationDTO> getApplicationsByStatus(User applicant, String status);
 	long countApplicationsByJob(Job job);
 	long countApplicationsByApplicant(User applicant);
+	ApplicationDTO acceptOffer(String applicationId, User applicant);
 }
 

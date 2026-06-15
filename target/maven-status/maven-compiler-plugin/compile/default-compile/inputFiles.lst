@@ -1,4 +1,5 @@
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/api/ResumeController.java
+/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/entity/TestLombok.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/AuthService.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/config/SecurityConfig.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/api/JobController.java
@@ -13,6 +14,7 @@
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/dto/ApplicationDTO.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/NotificationServiceImpl.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/entity/Application.java
+/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/api/AiController.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/dto/AuthResponse.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/repository/ApplicationRepository.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/repository/JobRepository.java
@@ -27,16 +29,18 @@
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/config/UserDetailsServiceImpl.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/ResumeService.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/config/SwaggerConfig.java
-/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/utility/Utility.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/NotificationService.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/CompanyReviewService.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/entity/Resume.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/entity/Job.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/ApplicationServiceImpl.java
+/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/config/TestLombokUsage.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/impl/CompanyReviewServiceImpl.java
-/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/entity/Sequence.java
+/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/AiService.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/ResumeServiceImpl.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/entity/Company.java
+/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/config/DataSeeder.java
+/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/WebSocketService.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/SavedJobServiceImpl.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/utility/ExceptionControllerAdvice.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/api/AdminController.java
@@ -56,6 +60,7 @@
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/dto/UserDTO.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/dto/JobDTO.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/service/ApplicationService.java
+/Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/config/WebSocketConfig.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/api/AuthController.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/exception/JobPortalException.java
 /Users/maitreypatel/Downloads/job_portal/main/java/com/jobportal/entity/SavedJob.java

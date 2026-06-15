@@ -27,6 +27,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 	@Autowired
 	private JobRepository jobRepository;
 
+	@Autowired
+	private AiService aiService;
+
 	@Override
 	public ApplicationDTO applyToJob(String jobId, ApplicationDTO applicationDTO, User applicant) {
 		// Check if job exists
@@ -54,28 +57,48 @@ public class ApplicationServiceImpl implements ApplicationService {
 		application.setAppliedAt(LocalDateTime.now());
 		application.setUpdatedAt(LocalDateTime.now());
 		
-		// AI Resume Matcher Logic
+		// AI Resume Matcher Logic (Real LLM via AiService)
 		double matchScore = 0.0;
-		List<String> matchedSkills = new java.util.ArrayList<>();
-		if (job.getSkills() != null && !job.getSkills().isEmpty() && applicationDTO.getSkillsMatch() != null) {
-		    List<String> jobSkills = job.getSkills().stream().map(String::toLowerCase).collect(Collectors.toList());
-		    List<String> applicantSkills = applicationDTO.getSkillsMatch().stream().map(String::toLowerCase).collect(Collectors.toList());
+		List<String> matchedSkills = applicationDTO.getSkillsMatch() != null ? applicationDTO.getSkillsMatch() : new java.util.ArrayList<>();
+		String aiFeedbackText = "No AI feedback generated.";
+		
+		try {
+		    String jobDesc = job.getDescription() + " Required Skills: " + String.join(", ", job.getSkills() != null ? job.getSkills() : new java.util.ArrayList<>());
+		    String appSkills = String.join(", ", matchedSkills);
+		    String appCoverLetter = applicationDTO.getCoverLetter() != null ? applicationDTO.getCoverLetter() : "No cover letter provided.";
 		    
-		    for (String jSkill : jobSkills) {
-		        for (String aSkill : applicantSkills) {
-		            if (aSkill.contains(jSkill) || jSkill.contains(aSkill)) {
-		                matchedSkills.add(jSkill);
-		                break;
-		            }
+		    String prompt = "You are an expert technical recruiter analyzing a candidate's fit for a job. " +
+		                    "Job Description: '" + jobDesc + "'. " +
+		                    "Candidate Skills: '" + appSkills + "'. " +
+		                    "Candidate Cover Letter: '" + appCoverLetter + "'. " +
+		                    "Analyze this resume/profile against the job. Output ONLY valid JSON with three keys: " +
+		                    "'matchScore' (integer 0-100), " +
+		                    "'skillsMatch' (array of strings showing which skills align), " +
+		                    "'aiFeedback' (string: detailed explanation of strengths and specific weaknesses or missing skills).";
+		                    
+		    String jsonResult = aiService.generateContent(prompt);
+		    
+		    com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+		    com.fasterxml.jackson.databind.JsonNode root = mapper.readTree(jsonResult);
+		    
+		    if (root.has("matchScore")) matchScore = root.get("matchScore").asDouble();
+		    if (root.has("aiFeedback")) aiFeedbackText = root.get("aiFeedback").asText();
+		    
+		    if (root.has("skillsMatch") && root.get("skillsMatch").isArray()) {
+		        matchedSkills.clear();
+		        for (com.fasterxml.jackson.databind.JsonNode node : root.get("skillsMatch")) {
+		            matchedSkills.add(node.asText());
 		        }
 		    }
-		    matchScore = (double) matchedSkills.size() / jobSkills.size() * 100.0;
-		    // cap at 100
-		    if (matchScore > 100.0) matchScore = 100.0;
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    aiFeedbackText = "Failed to process AI Match: " + e.getMessage();
+		    matchScore = applicationDTO.getMatchScore() != null ? applicationDTO.getMatchScore() : 0.0;
 		}
 		
-		application.setMatchScore(applicationDTO.getMatchScore() != null ? applicationDTO.getMatchScore() : matchScore);
-		application.setSkillsMatch(matchedSkills.isEmpty() && applicationDTO.getSkillsMatch() != null ? applicationDTO.getSkillsMatch() : matchedSkills);
+		application.setMatchScore(matchScore);
+		application.setSkillsMatch(matchedSkills);
+		application.setAiFeedback(aiFeedbackText);
 		
 		application = applicationRepository.save(application);
 		
@@ -105,6 +128,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 		return applications.map(this::convertToDTO);
 	}
 
+	@Autowired
+	private WebSocketService webSocketService;
+
 	@Override
 	public ApplicationDTO updateApplicationStatus(String applicationId, String status, User recruiter, String notes, String rejectionReason) {
 		Application application = applicationRepository.findById(applicationId)
@@ -128,11 +154,15 @@ public class ApplicationServiceImpl implements ApplicationService {
 			application.setRejectionReason(rejectionReason);
 		}
 		
-		if ("shortlisted".equals(status)) {
-			// Can set interview date later
-		}
-		
 		application = applicationRepository.save(application);
+		
+		// Send WebSocket Notification to Applicant
+		String message = "Your application for " + application.getJobId().getTitle() + " at " + application.getJobId().getCompany() + " was " + status + ".";
+		if ("rejected".equals(status) && rejectionReason != null && !rejectionReason.isEmpty()) {
+		    message += " Reason: " + rejectionReason;
+		}
+		webSocketService.sendNotification(application.getApplicantId().getId(), message, "STATUS_UPDATE");
+		
 		return convertToDTO(application);
 	}
 
@@ -149,6 +179,39 @@ public class ApplicationServiceImpl implements ApplicationService {
 		application.setStatus("withdrawn");
 		application.setUpdatedAt(LocalDateTime.now());
 		applicationRepository.save(application);
+	}
+
+	@Override
+	public ApplicationDTO acceptOffer(String applicationId, User applicant) {
+		Application application = applicationRepository.findById(applicationId)
+				   .orElseThrow(() -> new JobPortalException("Application not found"));
+		
+		if (!application.getApplicantId().getId().equals(applicant.getId())) {
+			throw new JobPortalException("You don't have permission to accept this offer");
+		}
+		if (!"hired".equals(application.getStatus()) && !"shortlisted".equals(application.getStatus())) {
+			throw new JobPortalException("You can only accept if you have an offer (shortlisted or hired)");
+		}
+		
+		application.setStatus("accepted");
+		application.setUpdatedAt(LocalDateTime.now());
+		application = applicationRepository.save(application);
+		
+		// Auto-withdraw other active applications
+		List<Application> otherApps = applicationRepository.findByApplicantId(applicant, Pageable.unpaged()).getContent();
+		for (Application app : otherApps) {
+			if (!app.getId().equals(application.getId()) && ("pending".equals(app.getStatus()) || "shortlisted".equals(app.getStatus()) || "hired".equals(app.getStatus()))) {
+				app.setStatus("withdrawn");
+				app.setUpdatedAt(LocalDateTime.now());
+				applicationRepository.save(app);
+			}
+		}
+		
+		// Send WebSocket Notification to Recruiter
+		String message = applicant.getName() + " has accepted the offer for " + application.getJobId().getTitle() + "!";
+		webSocketService.sendNotification(application.getJobId().getPostedBy().getId(), message, "OFFER_ACCEPTED");
+		
+		return convertToDTO(application);
 	}
 
 	@Override
@@ -190,6 +253,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 		dto.setInterviewDate(application.getInterviewDate());
 		dto.setMatchScore(application.getMatchScore());
 		dto.setSkillsMatch(application.getSkillsMatch());
+		dto.setAiFeedback(application.getAiFeedback());
 		return dto;
 	}
 }

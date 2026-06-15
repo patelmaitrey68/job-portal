@@ -22,6 +22,9 @@ public class JobServiceImpl implements JobService {
 	
 	@Autowired
 	private JobRepository jobRepository;
+	
+	@Autowired
+	private com.jobportal.repository.ApplicationRepository applicationRepository;
 
 	@Override
 	public JobDTO createJob(JobDTO jobDTO, User recruiter) {
@@ -97,6 +100,10 @@ public class JobServiceImpl implements JobService {
 		if (!job.getPostedBy().getId().equals(recruiter.getId())) {
 			   throw new JobPortalException("You don't have permission to delete this job");
 		}
+		
+		// Delete all applications for this job first
+		java.util.List<com.jobportal.entity.Application> applications = applicationRepository.findByJobId(job);
+		applicationRepository.deleteAll(applications);
 		
 		jobRepository.delete(job);
 	}

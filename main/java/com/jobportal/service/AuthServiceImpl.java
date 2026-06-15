@@ -62,6 +62,9 @@ public class AuthServiceImpl implements AuthService {
 		user.setEmail(request.getEmail().toLowerCase());
 		user.setPassword(passwordEncoder.encode(request.getPassword()));
 		user.setAccountType(request.getAccountType());
+		if (request.getCompanyName() != null) {
+		    user.setCompanyName(request.getCompanyName());
+		}
 		user.setIsActive(true);
 		user.setIsEmailVerified(false);
 		user.setCreatedAt(LocalDateTime.now());

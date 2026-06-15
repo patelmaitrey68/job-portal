@@ -24,5 +24,7 @@ public class UserDTO {
 	private String password; // Not included in responses
 	
 	private AccountType accountType;
+	
+	private String companyName;
 }
 

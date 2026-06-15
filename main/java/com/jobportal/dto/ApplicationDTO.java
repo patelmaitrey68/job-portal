@@ -30,5 +30,6 @@ public class ApplicationDTO {
 	private LocalDateTime interviewDate;
 	private Double matchScore;
 	private List<String> skillsMatch;
+	private String aiFeedback;
 }
 

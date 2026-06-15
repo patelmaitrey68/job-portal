@@ -1,0 +1,32 @@
+services:
+  - type: web
+    name: job-portal-backend
+    env: java
+    plan: free
+    buildCommand: mvn clean package -DskipTests
+    startCommand: java -jar target/jobportal-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: job-portal-db
+          property: connectionString
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: job-portal-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: job-portal-db
+          property: password
+      - key: DATABASE_DRIVER
+        value: org.postgresql.Driver
+      - key: DATABASE_PLATFORM
+        value: org.hibernate.dialect.PostgreSQLDialect
+      - key: cors.allowed.origins
+        value: https://job-portal-frontend.vercel.app # Placeholder, user will update
+
+databases:
+  - name: job-portal-db
+    databaseName: jobportaldb
+    user: admin
+    plan: free

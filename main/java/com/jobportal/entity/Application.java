@@ -62,6 +62,11 @@ public class Application {
 	private Double matchScore; // 0-100
 	
 	@ElementCollection
+	@CollectionTable(name = "application_skills_match", joinColumns = @JoinColumn(name = "application_id"))
+	@Column(name = "skill_match")
 	private List<String> skillsMatch; // Matched skills from resume
+	
+	@Column(columnDefinition = "TEXT")
+	private String aiFeedback; // AI generated feedback on missing skills
 }
 

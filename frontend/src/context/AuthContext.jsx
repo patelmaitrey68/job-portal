@@ -37,18 +37,19 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.message || 'Login failed' };
+      const errData = error.response?.data;
+      const errorMsg = errData?.errorMessage || errData?.message || 'Login failed';
+      return { success: false, error: errorMsg };
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (name, email, password, accountType = 'APPLICANT', companyName = '') => {
     try {
-      const response = await api.post('/auth/register', { 
-        name, 
-        email, 
-        password, 
-        role: 'CANDIDATE' 
-      });
+      const payload = { name, email, password, accountType };
+      if (accountType === 'EMPLOYER' && companyName) {
+        payload.companyName = companyName;
+      }
+      const response = await api.post('/auth/register', payload);
       const { token } = response.data;
       if (token) {
         localStorage.setItem('token', token);
@@ -59,7 +60,9 @@ export const AuthProvider = ({ children }) => {
       }
       return { success: true };
     } catch (error) {
-      return { success: false, error: error.response?.data?.message || 'Registration failed' };
+      const errData = error.response?.data;
+      const errorMsg = errData?.errorMessage || errData?.message || 'Registration failed';
+      return { success: false, error: errorMsg };
     }
   };
 
