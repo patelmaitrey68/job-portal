@@ -63,4 +63,48 @@ public class AiController {
         String jsonResult = aiService.generateContent(prompt);
         return ResponseEntity.ok(jsonResult);
     }
+
+    @PostMapping("/analyze-profile")
+    public ResponseEntity<String> analyzeProfile(@RequestBody Map<String, String> payload) {
+        String jobDescription = payload.get("jobDescription");
+        String applicantSkills = payload.get("applicantSkills");
+        
+        String prompt = "You are an expert technical recruiter and career coach. " +
+                        "The job description is: '" + jobDescription + "'. " +
+                        "The candidate's skills are: '" + applicantSkills + "'. " +
+                        "Analyze the candidate's fit for this role and return ONLY valid JSON. " +
+                        "The JSON must have the following keys: " +
+                        "'strengths' (array of strings), " +
+                        "'weaknesses' (array of strings), " +
+                        "'missingSkills' (array of strings), " +
+                        "'improvementSuggestions' (array of strings).";
+                        
+        String jsonResult = aiService.generateContent(prompt);
+        return ResponseEntity.ok(jsonResult);
+    }
+
+    @PostMapping("/mock-interview")
+    public ResponseEntity<String> mockInterview(@RequestBody Map<String, Object> payload) {
+        String jobDescription = (String) payload.get("jobDescription");
+        String applicantSkills = (String) payload.get("applicantSkills");
+        
+        // transcript is an array of message objects like {role: 'user', content: '...'}
+        // For simplicity, we just pass the stringified transcript.
+        Object transcriptObj = payload.get("transcript");
+        String transcript = transcriptObj != null ? transcriptObj.toString() : "[]";
+        
+        String prompt = "You are a technical interviewer for this job: '" + jobDescription + "'. " +
+                        "The candidate has these skills: '" + applicantSkills + "'. " +
+                        "Here is the interview transcript so far: " + transcript + " " +
+                        "Act as the interviewer. Evaluate the candidate's last answer (if any), give a suggested better answer if they struggled, and ask the next question. " +
+                        "If you have asked 3 questions already, conclude the interview and give overall feedback. " +
+                        "Output ONLY valid JSON with these keys: " +
+                        "'evaluation' (string: feedback on the last answer, empty if first turn), " +
+                        "'suggestedAnswer' (string: how they should have answered, empty if first turn), " +
+                        "'nextQuestion' (string: the question you are asking now), " +
+                        "'isComplete' (boolean: true if interview is over).";
+                        
+        String jsonResult = aiService.generateContent(prompt);
+        return ResponseEntity.ok(jsonResult);
+    }
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { User, FileText, Bookmark, Bell, Loader2, ExternalLink, Clock, CheckCircle, XCircle, AlertCircle, Star } from 'lucide-react';
+import { User, FileText, Bookmark, Bell, Loader2, ExternalLink, Clock, CheckCircle, XCircle, AlertCircle, Star, BrainCircuit } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
 import api from '../api/axios';
@@ -221,10 +221,14 @@ const Dashboard = () => {
                       )}
                       {getStatusBadge(app.status)}
                     </div>
-                    {app.status === 'hired' && (
+                    {app.status === 'hired' ? (
                       <button onClick={() => acceptOffer(app.id)} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}>
                         Accept Offer
                       </button>
+                    ) : (
+                      <Link to={`/applications/${app.id}/prep`} style={{ border: '1px solid var(--primary)', color: 'var(--primary)', padding: '0.3rem 0.6rem', borderRadius: '6px', fontSize: '0.8rem', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                        <BrainCircuit size={14} /> Prep Center
+                      </Link>
                     )}
                   </div>
                 </div>

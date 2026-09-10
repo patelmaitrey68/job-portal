@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Jobs from './pages/Jobs';
 import JobDetail from './pages/JobDetail';
+import InterviewPrep from './pages/InterviewPrep';
 import ProtectedRoute from './components/ProtectedRoute';
 import { WebSocketProvider } from './context/WebSocketContext';
 
@@ -22,6 +23,7 @@ function App() {
               <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
               <Route path="/jobs/:id" element={<ProtectedRoute><JobDetail /></ProtectedRoute>} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/applications/:id/prep" element={<ProtectedRoute><InterviewPrep /></ProtectedRoute>} />
               {/* Catch all route - redirect to home */}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
